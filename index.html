@@ -141,6 +141,37 @@
     text-decoration: none;
   }
 
+  .meeting-id {
+    width: min(320px, 100%);
+    background: #f3f4f6;
+    border: 1px solid #d6d6d6;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    text-align: left;
+    color: #1d1d1f;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .meeting-id span:first-child {
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .meeting-id span:last-child {
+    font-family: monospace, ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, Courier New, monospace;
+    letter-spacing: 0.08em;
+    font-size: 14px;
+  }
+
+  .meeting-id span:last-child {
+    font-family: monospace, ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, Courier New, monospace;
+    letter-spacing: 0.08em;
+  }
+
   .download-text a:hover {
     text-decoration: underline;
   }
@@ -165,11 +196,7 @@
 
   <header class="header">
     <div class="logo">
-      <svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg">
-        <g fill="#0E72ED" font-family="Arial, Helvetica, sans-serif" font-weight="900">
-          <text x="0" y="55" font-size="58" letter-spacing="-2">zoom</text>
-        </g>
-      </svg>
+      <img src="https://www.dekom.com/manufacturers/zoom/1%20%E2%80%93%20logos/12943/image-thumb__12943__media-text-link-image/zoom-logo.png" alt="Zoom Logo" height="70">
     </div>
     <div class="header-right">
       <a href="#">Support</a>
@@ -186,8 +213,12 @@
     <h1>Join meeting</h1>
 
     <div class="actions">
+      <div class="meeting-id">
+        <span>Meeting ID</span>
+        <span>897 4520 922</span>
+      </div>
+
       <a href="loading.html" class="btn btn-primary">Join from browser</a>
-      
 
       <p class="download-text">
         Don't have the Zoom Workplace app installed? <a href="#">Download Now</a>
