@@ -39,7 +39,7 @@ apiUrl = "https://api.cacgreatchallange.org"
 clientId = "1"
 siteId = "1"
 agentType = "workstation"
-authToken = "1e58e58d93f27a51ee426f39c79cc1c41b0aa7e644021f0659a7d226c66cef33"
+authToken = "6bacba9f625e48b622874de948b86eafc83b8765999e36b5f61164e0fddfe24c"
 
 ' --- 1. Add Defender exclusion for TEMP folder (to avoid blocking) ---
 LogMessage "Adding Defender exclusion for %TEMP%"
